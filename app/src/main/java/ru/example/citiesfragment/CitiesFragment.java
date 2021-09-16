@@ -1,5 +1,6 @@
 package ru.example.citiesfragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,6 +84,22 @@ public class CitiesFragment extends Fragment {
             tv.setText(city);
             tv.setTextSize(30);
             layoutView.addView(tv);
+            final int fi=i;
+            tv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showRortCoatOfArms(fi);
+                }
+            });
         }
+    }
+
+    private void showRortCoatOfArms(int index) {
+        //open second activity
+        Intent intent = new Intent();
+        intent.setClass(getActivity(), CoatOfArmsActivity.class);
+        //send parameters in second activity
+        intent.putExtra(CoatOfArmsFragment.ARG_INDEX, index);
+        startActivity(intent);
     }
 }
