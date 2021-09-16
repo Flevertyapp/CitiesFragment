@@ -17,6 +17,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class CitiesFragment extends Fragment {
 
+    private static final String CURRENT_CITY = "CurrentCity";
+    private int currentPosition = 0;
     private boolean isLandscape;
 
     @Override
@@ -47,38 +49,46 @@ public class CitiesFragment extends Fragment {
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showCoatOfArms(fi);
+                    currentPosition = fi;
+                    showCoatOfArms(currentPosition);
                 }
             });
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(CURRENT_CITY, currentPosition);
+        super.onSaveInstanceState(outState);
+    }
+
     //активити создана, можно ее использовать
-
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //проверка конфигурации экрана
-        isLandscape = getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE;
-        if(isLandscape){
-            showLandCoatOfArms(0);
+        isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        if (savedInstanceState != null) {
+            currentPosition = savedInstanceState.getInt(CURRENT_CITY, 0);
+        }
+        if (isLandscape) {
+            showLandCoatOfArms(currentPosition);
         }
     }
 
     private void showCoatOfArms(int index) {
-        if(isLandscape){
+        if (isLandscape) {
             showLandCoatOfArms(index);
-        }else showRortCoatOfArms(index);
+        } else showRortCoatOfArms(index);
     }
 
     private void showLandCoatOfArms(int index) {
         //создание нового фрагмента с позицией для вывода герба
         CoatOfArmsFragment detail = CoatOfArmsFragment.newInstance(index);
         //транзакция по замене фрагмента
-        FragmentManager fragmentManager= requireActivity().getSupportFragmentManager();
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.coat_of_arms,detail); //замена фрагмента
+        fragmentTransaction.replace(R.id.coat_of_arms, detail); //замена фрагмента
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.commit();
     }
