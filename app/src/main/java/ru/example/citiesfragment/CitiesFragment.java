@@ -18,7 +18,8 @@ import androidx.fragment.app.FragmentTransaction;
 public class CitiesFragment extends Fragment {
 
     private static final String CURRENT_CITY = "CurrentCity";
-    private int currentPosition = 0;
+    //private int currentPosition = 0;
+    private City currentCity;
     private boolean isLandscape;
 
     @Override
@@ -49,8 +50,10 @@ public class CitiesFragment extends Fragment {
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    currentPosition = fi;
-                    showCoatOfArms(currentPosition);
+/*                    currentPosition = fi;
+                    showCoatOfArms(currentPosition);*/
+                    currentCity = new City(fi, getResources().getStringArray(R.array.cities)[fi]);
+                    showCoatOfArms(currentCity);
                 }
             });
         }
@@ -58,7 +61,8 @@ public class CitiesFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(CURRENT_CITY, currentPosition);
+        //outState.putInt(CURRENT_CITY, currentPosition);
+        outState.putParcelable(CURRENT_CITY, currentCity);
         super.onSaveInstanceState(outState);
     }
 
@@ -69,22 +73,32 @@ public class CitiesFragment extends Fragment {
         //проверка конфигурации экрана
         isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
         if (savedInstanceState != null) {
-            currentPosition = savedInstanceState.getInt(CURRENT_CITY, 0);
+            //currentPosition = savedInstanceState.getInt(CURRENT_CITY, 0);
+            currentCity = savedInstanceState.getParcelable(CURRENT_CITY);
+        } else {
+            currentCity = new City(0, getResources().getStringArray(R.array.cities)[0]);
         }
         if (isLandscape) {
-            showLandCoatOfArms(currentPosition);
+            //showLandCoatOfArms(currentPosition);
+            showLandCoatOfArms(currentCity);
         }
     }
 
-    private void showCoatOfArms(int index) {
+    /*    private void showCoatOfArms(int index) {
+            if (isLandscape) {
+                showLandCoatOfArms(index);
+            } else showRortCoatOfArms(index);
+        }*/
+    private void showCoatOfArms(City currentCity) {
         if (isLandscape) {
-            showLandCoatOfArms(index);
-        } else showRortCoatOfArms(index);
+            showLandCoatOfArms(currentCity);
+        } else showRortCoatOfArms(currentCity);
     }
 
-    private void showLandCoatOfArms(int index) {
+    private void showLandCoatOfArms(City currentCity) {
         //создание нового фрагмента с позицией для вывода герба
-        CoatOfArmsFragment detail = CoatOfArmsFragment.newInstance(index);
+        //CoatOfArmsFragment detail = CoatOfArmsFragment.newInstance(index);
+        CoatOfArmsFragment detail = CoatOfArmsFragment.newInstance(currentCity);
         //транзакция по замене фрагмента
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -93,12 +107,12 @@ public class CitiesFragment extends Fragment {
         fragmentTransaction.commit();
     }
 
-    private void showRortCoatOfArms(int index) {
+    private void showRortCoatOfArms(City currentCity) {
         //open second activity
         Intent intent = new Intent();
         intent.setClass(getActivity(), CoatOfArmsActivity.class);
         //send parameters in second activity
-        intent.putExtra(CoatOfArmsFragment.ARG_INDEX, index);
+        intent.putExtra(CoatOfArmsFragment.ARG_CITY, currentCity);
         startActivity(intent);
     }
 }

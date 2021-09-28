@@ -12,11 +12,11 @@ public class CoatOfArmsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coat_of_arms);
 
-        if (getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE){
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             finish();
             return;
         }
-        if (savedInstanceState==null){
+        if (savedInstanceState == null) {
             CoatOfArmsFragment details = new CoatOfArmsFragment();
             details.setArguments(getIntent().getExtras());
             getSupportFragmentManager()
